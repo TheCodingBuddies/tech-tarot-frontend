@@ -2,6 +2,7 @@
     import {CardState} from "./main";
     import Stack from "./Stack.svelte";
     import PlayCard from "./PlayCard.svelte";
+    import {onMount} from "svelte";
 
     interface Card {
         name: string
@@ -10,11 +11,12 @@
     }
 
     let counter = $state(0);
-    let drawnCards = $state<Card[]>([
-        {name: "first", state: CardState.stack, drawn: false},
-        {name: "second", state: CardState.stack, drawn: false},
-        {name: "third", state: CardState.stack, drawn: false}
-    ]);
+    let drawnCards = $state<Card[]>([]);
+
+    onMount(() => {
+        reset();
+    })
+
 
     function next() {
         counter >= 3 ? reset() : draw();
@@ -25,10 +27,16 @@
     }
 
     function reset() {
-        drawnCards.forEach(c => {
-            c.state = CardState.stack;
-            c.drawn = false;
-        })
+        fetch("http://localhost:8080/cards")
+            .then(response => response.json())
+            .then((cards: Card[]) => {
+                drawnCards = cards.map(c => {
+                    return {name: c.name, state: CardState.stack, drawn: false}
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
         counter = 0;
     }
 

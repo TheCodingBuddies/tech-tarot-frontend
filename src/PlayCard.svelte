@@ -15,7 +15,7 @@
      onclick={() => card.state = CardState.visible}>
     {#if card.drawn}
         <div class="front">
-            <span class="symbol">CB</span>
+            <span class="symbol">{card.name}</span>
         </div>
         <div class="back">
             <div class="pattern"></div>
