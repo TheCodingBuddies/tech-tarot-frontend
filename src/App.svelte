@@ -15,6 +15,13 @@
 
     onMount(() => {
         reset();
+        const evtSource = new EventSource("http://localhost:8080/connect");
+        evtSource.onmessage = (event) => {
+            console.log(event.data);
+        }
+        evtSource.onerror = (error) => {
+            console.log("error case:" + error);
+        }
     })
 
 
@@ -34,9 +41,7 @@
                     return {name: c.name, state: CardState.stack, drawn: false}
                 });
             })
-            .catch(error => {
-                console.log(error);
-            });
+            .catch(error => console.log(error));
         counter = 0;
     }
 
