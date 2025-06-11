@@ -12,11 +12,15 @@
 
     let counter = $state(0);
     let drawnCards = $state<Card[]>([]);
+    let gameStarted = $state(false);
 
     onMount(() => {
         reset();
         const evtSource = new EventSource("http://localhost:8080/connect");
         evtSource.onmessage = (event) => {
+            if (event.data.includes("game")) {
+                gameStarted = true;
+            }
             console.log(event.data);
         }
         evtSource.onerror = (error) => {
@@ -43,6 +47,7 @@
             })
             .catch(error => console.log(error));
         counter = 0;
+        gameStarted = false;
     }
 
     function getFlyAttributes(cardPosition: number): any {
@@ -56,20 +61,22 @@
 </script>
 
 <main>
-    <section class="tech-tarot">
-        <div class="game-area">
-            <div class="your-future">
-                {#each drawnCards as card, i}
-                    <div class="card placeholder">
-                        {#if card.state !== CardState.stack}
-                            <PlayCard id={i} bind:card={drawnCards[i]} callback={getFlyAttributes(i)}></PlayCard>
-                        {/if}
-                    </div>
-                {/each}
+    {#if gameStarted}
+        <section class="tech-tarot">
+            <div class="game-area">
+                <div class="your-future">
+                    {#each drawnCards as card, i}
+                        <div class="card placeholder">
+                            {#if card.state !== CardState.stack}
+                                <PlayCard id={i} bind:card={drawnCards[i]} callback={getFlyAttributes(i)}></PlayCard>
+                            {/if}
+                        </div>
+                    {/each}
+                </div>
+                <Stack {next}/>
             </div>
-            <Stack {next}/>
-        </div>
-    </section>
+        </section>
+    {/if}
 </main>
 
 <style>
