@@ -15,7 +15,7 @@
      onclick={() => card.state = CardState.visible}>
     {#if card.drawn}
         <div class="front">
-            <span class="symbol">{card.name}</span>
+            <img class="tt-image" src="http://localhost:8080/image?id=1">
         </div>
         <div class="back">
             <div class="pattern"></div>
@@ -36,6 +36,11 @@
 
     .flipped {
         transform: rotateY(0);
+    }
+
+    .tt-image {
+        width: 100%;
+        height: 100%;
     }
 
     .symbol {

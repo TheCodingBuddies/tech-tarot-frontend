@@ -5,7 +5,8 @@
     import {onMount} from "svelte";
 
     interface Card {
-        name: string
+        name: string;
+        id: string;
         state: CardState;
         drawn: boolean;
     }
@@ -42,7 +43,7 @@
             .then(response => response.json())
             .then((cards: Card[]) => {
                 drawnCards = cards.map(c => {
-                    return {name: c.name, state: CardState.stack, drawn: false}
+                    return {name: c.name, id: c.id, state: CardState.stack, drawn: false}
                 });
             })
             .catch(error => console.log(error));
