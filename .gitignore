@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# configurable content
+public/Deckblatt.png
+public/TechTarot_Start.mp3
+public/Tisch.png

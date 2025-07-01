@@ -1,11 +1,13 @@
 <script lang="ts">
     import {CardState} from "./main";
     import {fly} from 'svelte/transition';
+    import background from '/Deckblatt.png'
 
     let {id, card = $bindable(), callback} = $props()
 </script>
 
-<div class="flippable card {card.state === CardState.visible ? 'flipped': 'pattern'}"
+<div class="flippable card"
+     class:flipped={card.state === CardState.visible}
      id={"c-" + id}
      role="button"
      tabindex="0"
@@ -18,8 +20,10 @@
             <img class="tt-image" src="http://localhost:8080/image?id=1">
         </div>
         <div class="back">
-            <div class="pattern"></div>
+            <img class="tt-image" src={background}>
         </div>
+    {:else}
+        <img class="tt-image reverse" src="{background}">
     {/if}
 </div>
 
@@ -38,22 +42,8 @@
         transform: rotateY(0);
     }
 
-    .tt-image {
-        width: 100%;
-        height: 100%;
-    }
-
-    .symbol {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        font-size: 52px;
-        font-weight: bold;
-        font-family: Rockwell,serif;
-        color: #0c323b;
-        background-color: aquamarine;
+    .reverse {
+        transform: rotateY(-180deg);
     }
 
     .back, .front {

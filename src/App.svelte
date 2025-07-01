@@ -3,6 +3,8 @@
     import Stack from "./Stack.svelte";
     import PlayCard from "./PlayCard.svelte";
     import {onMount} from "svelte";
+    import startSound from "/TechTarot_Start.mp3";
+    import table from "/Tisch.png";
 
     interface Card {
         name: string;
@@ -14,21 +16,25 @@
     let counter = $state(0);
     let drawnCards = $state<Card[]>([]);
     let gameStarted = $state(false);
+    let username = $state("");
+    let audio: HTMLAudioElement;
 
+    //todo: Tisch muss in den Hintergrund fitten
     onMount(() => {
         reset();
         const evtSource = new EventSource("http://localhost:8080/connect");
         evtSource.onmessage = (event) => {
-            if (event.data.includes("game")) {
+            if (!event.data.includes("keepalive")) {
+                console.log("Server send data: ", event.data);
+                username = event.data;
                 gameStarted = true;
+                audio.play();
             }
-            console.log(event.data);
         }
         evtSource.onerror = (error) => {
             console.log("error case:" + error);
         }
     })
-
 
     function next() {
         counter >= 3 ? reset() : draw();
@@ -62,20 +68,26 @@
 </script>
 
 <main>
+    <audio src="{startSound}" bind:this={audio}></audio>
     {#if gameStarted}
         <section class="tech-tarot">
-            <div class="game-area">
-                <div class="your-future">
-                    {#each drawnCards as card, i}
-                        <div class="card placeholder">
-                            {#if card.state !== CardState.stack}
-                                <PlayCard id={i} bind:card={drawnCards[i]} callback={getFlyAttributes(i)}></PlayCard>
-                            {/if}
-                        </div>
-                    {/each}
+            {#if username}
+                <span class="title">Es ist Zeit für deine Zukunft {username}</span>
+                <div class="game-area">
+                    <div class="your-future">
+                        {#each drawnCards as card, i}
+                            <div class="card placeholder">
+                                {#if card.state !== CardState.stack}
+                                    <PlayCard id={i} bind:card={drawnCards[i]}
+                                              callback={getFlyAttributes(i)}></PlayCard>
+                                {/if}
+                            </div>
+                        {/each}
+                    </div>
+                    <Stack {next}/>
+<!--                    <img class="table" src="{table}">-->
                 </div>
-                <Stack {next}/>
-            </div>
+            {/if}
         </section>
     {/if}
 </main>
@@ -83,14 +95,25 @@
 <style>
     .tech-tarot {
         display: flex;
+        gap: 48px;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         height: 100vh;
     }
 
+    .title {
+        font-size: 48px;
+        font-weight: bold;
+    }
+
     .game-area {
         display: flex;
         gap: 50px;
+    }
+
+    .table {
+        position: absolute;
     }
 
     .your-future {
@@ -100,7 +123,8 @@
 
     .placeholder {
         background-color: transparent;
-        border-color: #575757;
+        border: 2px solid #575757;
+        border-radius: 18px;
         display: flex;
         justify-content: center;
         align-items: center;

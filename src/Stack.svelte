@@ -1,4 +1,5 @@
 <script lang="ts">
+    import background from '/Deckblatt.png'
     let {next} = $props()
 
     function onKeydown(event : KeyboardEvent) {
@@ -11,9 +12,9 @@
 <svelte:window onkeydown={onKeydown}></svelte:window>
 
 <div class="card-stack" id="stack" role="button" tabindex="0" onclick={next} onkeydown={() => {}}>
-    <div class="card pattern card-3"></div>
-    <div class="card pattern card-2"></div>
-    <div class="card pattern card-1"></div>
+    <img class="card tt-image card-3" src="{background}">
+    <img class="card tt-image card-2" src="{background}">
+    <img class="card tt-image card-1" src="{background}">
 </div>
 
 <style>
